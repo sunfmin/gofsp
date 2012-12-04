@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"os"
-	"log"
 	"fmt"
+	"github.com/sunfmin/gofsp"
+	"log"
+	"os"
 )
 
 const (
@@ -22,7 +23,7 @@ func main() {
 		os.Exit(0)
 	}
 
-  fsp := NewFspServer()
+	fsp := gofsp.NewFspServer()
 
 	// load policy from file
 	if len(*filename) > 0 {
@@ -33,5 +34,5 @@ func main() {
 		fsp.LoadPolicy(file)
 	}
 
-  fsp.Startup()
+	fsp.Startup()
 }
