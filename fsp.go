@@ -23,7 +23,7 @@ func NewFspServer() *FspServer {
 	return fsp
 }
 
-func (fs *FspServer) Startup() {
+func (fs *FspServer) Startup(stop chan struct{}) {
 	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:843")
 	if err != nil {
 		log.Fatalln(err)
@@ -34,13 +34,17 @@ func (fs *FspServer) Startup() {
 	}
 	log.Printf("Listening on %s", addr.String())
 
-	for {
-		conn, err := fs.listener.AcceptTCP()
-		if err != nil {
-			log.Fatalln(err)
+	go func() {
+		for {
+			conn, err := fs.listener.AcceptTCP()
+			if err != nil {
+				log.Fatalln(err)
+			}
+			go fs.read(conn)
 		}
-		go fs.read(conn)
-	}
+	}()
+
+	<-stop
 	fs.listener.Close()
 }
 
