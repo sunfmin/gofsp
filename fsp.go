@@ -23,8 +23,8 @@ func NewFspServer() *FspServer {
 	return fsp
 }
 
-func (fs *FspServer) Startup(stop chan struct{}) {
-	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:843")
+func (fs *FspServer) Startup(port string, stop chan struct{}) {
+	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0"+port)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -43,6 +43,10 @@ func (fs *FspServer) Startup(stop chan struct{}) {
 			go fs.read(conn)
 		}
 	}()
+
+	if stop == nil {
+		return
+	}
 
 	<-stop
 	fs.listener.Close()
